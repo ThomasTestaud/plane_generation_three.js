@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Plane with Hills</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <!-- Include Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Set up the scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Add a directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(50, 50, 50).normalize();
+        scene.add(directionalLight);
+
+        // Create a plane geometry
+        const width = 15;
+        const height = 15;
+        const widthSegments = 10;
+        const heightSegments = 10;
+        const planeGeometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
+
+        // Modify the vertices to create random hills
+        const positionAttribute = planeGeometry.attributes.position;
+        for (let i = 0; i < positionAttribute.count; i++) {
+            const z = Math.random() * 2;  // Adjust the multiplier to control the hill height
+            positionAttribute.setZ(i, z);
+        }
+        planeGeometry.computeVertexNormals();  // Recalculate normals for shading
+
+        // Create a basic material and mesh
+        const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+        const plane = new THREE.Mesh(planeGeometry, material);
+
+        // Rotate the plane to make it horizontal
+        plane.rotation.x = -Math.PI / 2;
+        scene.add(plane);
+
+        // Set the camera position
+        camera.position.z = 12;
+        camera.position.y = 8;
+        camera.lookAt(new THREE.Vector3(0, -1, 0));
+
+        // Render the scene
+        function animate() {
+            plane.rotation.z += 0.002;
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
