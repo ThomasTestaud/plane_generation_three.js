@@ -41,7 +41,7 @@
         planeGeometry.computeVertexNormals();  // Recalculate normals for shading
 
         // Create a basic material and mesh
-        const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+        const material = new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide, flatShading: true});
         const plane = new THREE.Mesh(planeGeometry, material);
 
         // Rotate the plane to make it horizontal
